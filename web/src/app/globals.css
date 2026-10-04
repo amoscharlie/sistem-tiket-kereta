@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  --background: #eef2f6;
+  --foreground: #122033;
+  --navy: #0e2a47;
+  --red: #d7263d;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), sans-serif;
+}
+
+h1,
+h2,
+.font-serif {
+  font-family: var(--font-serif), serif;
+}
+
+.field {
+  margin-top: 0.35rem;
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #d5deea;
+  background: white;
+  padding: 0.7rem 0.85rem;
+  outline: none;
+}
+
+.field:focus {
+  border-color: #0e2a47;
+}
+
+.tabel {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.tabel th {
+  background: #0e2a47;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+}
+
+.tabel td {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #e8eef5;
+  vertical-align: top;
+}
+
+.tabel tbody tr:hover {
+  background: #f7f9fc;
+}
+
+@media print {
+  header,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+  }
+}
