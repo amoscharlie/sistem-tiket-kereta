@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Ikon from "@/components/Ikon";
-import { ambilSesi, api } from "@/lib/api";
+import { ambilSesi, api, langgananSesi, penggunaSesi } from "@/lib/api";
 import { rupiah } from "@/lib/format";
 
 function Kotak({ label, nilai, href, ikon }) {
@@ -21,14 +21,21 @@ function Kotak({ label, nilai, href, ikon }) {
   return href ? <Link href={href}>{isi}</Link> : isi;
 }
 
+function peranSesi() {
+  return penggunaSesi()?.role ?? "";
+}
+
+function peranKosong() {
+  return "";
+}
+
 export default function AdminIndexPage() {
-  const [peran, setPeran] = useState("");
+  const peran = useSyncExternalStore(langgananSesi, peranSesi, peranKosong);
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const role = ambilSesi()?.user?.role ?? "";
-    setPeran(role);
     const jalur = role === "pengelola" ? "/pengelola/ringkas" : "/admin/ringkas";
     api(jalur)
       .then((res) => setData(res.data))

@@ -29,8 +29,20 @@ function HalamanTiket() {
   }
 
   useEffect(() => {
-    if (awal) muat(awal);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!awal) return undefined;
+    let batal = false;
+    api(`/tiket/${encodeURIComponent(awal)}`)
+      .then((res) => {
+        if (batal) return;
+        setError("");
+        setData(res.data);
+      })
+      .catch((err) => {
+        if (!batal) setError(err.message);
+      });
+    return () => {
+      batal = true;
+    };
   }, [awal]);
 
   useEffect(() => {

@@ -7,6 +7,39 @@ export function ambilSesi() {
   return raw ? JSON.parse(raw) : null;
 }
 
+let cuplikanSesi = { raw: undefined, user: null };
+
+function penggunaDariPenyimpanan() {
+  if (typeof window === "undefined") return null;
+  const raw = localStorage.getItem("tiket_sesi");
+  if (raw === cuplikanSesi.raw) return cuplikanSesi.user;
+  let user = null;
+  if (raw) {
+    try {
+      user = JSON.parse(raw).user ?? null;
+    } catch {
+      user = null;
+    }
+  }
+  cuplikanSesi = { raw, user };
+  return user;
+}
+
+export function langgananSesi(pemberitahu) {
+  window.addEventListener("sesi-berubah", pemberitahu);
+  return () => window.removeEventListener("sesi-berubah", pemberitahu);
+}
+
+export function penggunaSesi() {
+  return penggunaDariPenyimpanan();
+}
+
+export function penggunaStaf() {
+  const user = penggunaDariPenyimpanan();
+  if (!user || user.role === "pelanggan") return null;
+  return user;
+}
+
 export function simpanSesi(sesi) {
   localStorage.setItem("tiket_sesi", JSON.stringify(sesi));
   window.dispatchEvent(new Event("sesi-berubah"));

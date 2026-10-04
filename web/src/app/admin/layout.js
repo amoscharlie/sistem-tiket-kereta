@@ -2,9 +2,13 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Ikon from "@/components/Ikon";
-import { ambilSesi, api, hapusSesi } from "@/lib/api";
+import { ambilSesi, api, hapusSesi, langgananSesi, penggunaStaf } from "@/lib/api";
+
+function tanpaPengguna() {
+  return null;
+}
 
 const MENU = {
   admin: [
@@ -26,16 +30,14 @@ const MENU = {
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const user = useSyncExternalStore(langgananSesi, penggunaStaf, tanpaPengguna);
   const [buka, setBuka] = useState(false);
 
   useEffect(() => {
     const sesi = ambilSesi();
     if (!sesi?.user || sesi.user.role === "pelanggan") {
       router.replace("/masuk?lanjut=/admin");
-      return;
     }
-    setUser(sesi.user);
   }, [router]);
 
   async function keluar() {

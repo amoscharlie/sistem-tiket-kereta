@@ -1,19 +1,28 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { api, simpanSesi } from "@/lib/api";
+
+function tokenGoogle() {
+  return new URLSearchParams(window.location.search).get("token") ?? "";
+}
+
+function tanpaLangganan() {
+  return () => {};
+}
+
+function tokenKosong() {
+  return null;
+}
 
 export default function GooglePage() {
   const router = useRouter();
+  const token = useSyncExternalStore(tanpaLangganan, tokenGoogle, tokenKosong);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const token = new URLSearchParams(window.location.search).get("token");
-    if (!token) {
-      setError("Token Google tidak ada.");
-      return;
-    }
+    if (!token) return;
     simpanSesi({ token, user: null });
     api("/saya")
       .then((res) => {
@@ -22,7 +31,8 @@ export default function GooglePage() {
         router.replace(user.role === "admin" || user.role === "pengelola" ? "/admin" : "/");
       })
       .catch((err) => setError(err.message));
-  }, [router]);
+  }, [router, token]);
 
-  return <p className="mx-auto max-w-xl px-4 py-8">{error || "Menyelesaikan masuk Google..."}</p>;
+  const teks = error || (token === "" ? "Token Google tidak ada." : "Menyelesaikan masuk Google...");
+  return <p className="mx-auto max-w-xl px-4 py-8">{teks}</p>;
 }
